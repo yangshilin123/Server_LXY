@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ForumMsgMapper">
+    
+    <resultMap type="ForumMsg" id="ForumMsgResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="time"    column="time"    />
+        <result property="content"    column="content"    />
+    </resultMap>
+
+    <sql id="selectForumMsgVo">
+        select id, user_id, time, content from forum_msg
+    </sql>
+
+    <select id="selectForumMsgList" parameterType="ForumMsg" resultMap="ForumMsgResult">
+        <include refid="selectForumMsgVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectForumMsgById" parameterType="Long" resultMap="ForumMsgResult">
+        <include refid="selectForumMsgVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertForumMsg" parameterType="ForumMsg">
+        insert into forum_msg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="time != null">time,</if>
+            <if test="content != null">content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="time != null">#{time},</if>
+            <if test="content != null">#{content},</if>
+         </trim>
+    </insert>
+
+    <update id="updateForumMsg" parameterType="ForumMsg">
+        update forum_msg
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="content != null">content = #{content},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteForumMsgById" parameterType="Long">
+        delete from forum_msg where id = #{id}
+    </delete>
+
+    <delete id="deleteForumMsgByIds" parameterType="String">
+        delete from forum_msg where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
